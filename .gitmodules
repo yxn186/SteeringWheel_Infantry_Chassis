@@ -1,0 +1,3 @@
+[submodule "YXN_ECF"]
+	path = YXN_ECF
+	url = git@github.com:yxn186/YXN_ECF.git
