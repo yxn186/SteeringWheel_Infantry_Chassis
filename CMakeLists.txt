@@ -92,6 +92,11 @@ set(YXN_ECF_DIR
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # ${YXN_ECF_DIR}/2_module/Alg/PID/PID.cpp
     # Add user sources here
+    ${YXN_ECF_DIR}/module/Chassis_Calculation/SteeringWheel_Chassis_Calculation/SteeringWheel_Chassis_Calculation.cpp
+    ${YXN_ECF_DIR}/bsp/CAN/FDCAN/bsp_fdcan.cpp
+    ${YXN_ECF_DIR}/bsp/CAN/FDCAN/fdcan_adapter.cpp
+    ${YXN_ECF_DIR}/module/Motor/DJI_Motor/DJI_Motor.cpp
+    ${YXN_ECF_DIR}/algorithm/PID/PID.cpp
 )
 
 #头文件路径和宏定义区域
@@ -99,6 +104,12 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     # ${YXN_ECF_DIR}/2_module/Alg/PID
+    ${YXN_ECF_DIR}/module/Chassis_Calculation/SteeringWheel_Chassis_Calculation
+    ${YXN_ECF_DIR}/bsp/CAN/FDCAN
+    ${YXN_ECF_DIR}/bsp/CAN
+    ${YXN_ECF_DIR}/module/Motor/DJI_Motor
+    ${YXN_ECF_DIR}/bsp/CAN
+    ${YXN_ECF_DIR}/algorithm/PID
 )
 
 # Add project symbols (macros)

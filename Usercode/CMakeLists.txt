@@ -1,6 +1,7 @@
 # Application source files
 set(USER_APP_SOURCES
-    # App/App_Chassis.cpp
+    Application/App_Chassis/App_Chassis.cpp
+    Application/App_CAN/App_CAN.cpp
 )
 # set() 创建名为 USER_APP_SOURCES 的 CMake 列表变量。
 # 每创建一个 App 源文件，就把相对 Usercode 目录的路径写在这里，例如：
@@ -13,6 +14,7 @@ set(USER_APP_SOURCES
 # FreeRTOS task source files
 set(USER_TASK_SOURCES
     # Task/User_Task.cpp
+    Chassis_Task/Chassis_Task.cpp
 )
 # Task 层的写法与 App 相同，例如：
 #
