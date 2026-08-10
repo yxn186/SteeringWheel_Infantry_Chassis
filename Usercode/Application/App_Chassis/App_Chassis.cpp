@@ -34,6 +34,54 @@ Class_SteeringWheel_Chassis_Calculation SteeringWheel_Chassis_Calculation;
 Class_PID Wheel_Motor_PID[4];
 Class_PID Steering_Motor_PID[4];
 
+//底盘全部大疆电机在线状态，便于运行时观察
+bool All_Motors_Online = false;
+
+/**
+ * @brief 更新并检查底盘全部大疆电机的在线状态
+ *
+ * @return true 4个轮电机和4个舵电机均已收到合法反馈且未超时
+ * @return false 任一电机尚未收到合法反馈或反馈已经超时
+ */
+static bool App_Chassis_All_Motors_Online(void)
+{
+    bool All_Motors_Online = true;
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        Wheel_Motor[i].Update_Online_State();
+        Steering_Motor[i].Update_Online_State();
+
+        if (!Wheel_Motor[i].Get_Online_State() || !Steering_Motor[i].Get_Online_State())
+        {
+            All_Motors_Online = false;
+        }
+    }
+
+    return All_Motors_Online;
+}
+
+/**
+ * @brief 清零底盘全部电机和PID输出，并发送零控制帧
+ *
+ * 上电反馈未就绪或运行中任一电机掉线时调用，避免电调继续执行
+ * 最近一次非零控制命令。
+ */
+static void App_Chassis_Force_Zero_Output(void)
+{
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        Wheel_Motor_PID[i].Reset();
+        Steering_Motor_PID[i].Reset();
+
+        Wheel_Motor[i].Set_Out(0);
+        Steering_Motor[i].Set_Out(0);
+    }
+
+    Wheel_Motor_Group.Push_Data();
+    Steering_Motor_Group.Push_Data();
+}
+
 /**
  * @brief 底盘CAN接收回调函数
  * 
@@ -128,6 +176,8 @@ void App_Chassis_Init(void)
  */
 void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
 {
+    All_Motors_Online = App_Chassis_All_Motors_Online();
+
     //设置当前值
     for(uint8_t i = 0; i < 4; i++)
     {
@@ -164,6 +214,13 @@ void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
 
     //数据更新计算
     SteeringWheel_Chassis_Calculation.Update();
+
+    // 反馈未全部就绪时继续刷新底盘数据，但禁止PID计算和非零输出。
+    if (!All_Motors_Online)
+    {
+        App_Chassis_Force_Zero_Output();
+        return;
+    }
 
     //目标计算完成 传入PID 进行计算 将Out传入电机
     for(uint8_t i = 0; i < 4; i++)
