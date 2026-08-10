@@ -30,8 +30,20 @@ extern "C" {
  */
 void App_Chassis_CAN_RX_Callback(uint8_t CAN_Index,uint16_t id,const uint8_t *data,uint8_t length);
 
+/**
+ * @brief 底盘初始化
+ * 
+ */
+void App_Chassis_Init(void);
 
-
+/**
+ * @brief 底盘数据更新
+ * 
+ * @param Speed_X 底盘前后速度 前正后负 单位m/s
+ * @param Speed_Y 底盘左右速度 左正右负 单位m/s
+ * @param W_Z 底盘旋转速度 逆时针为正 单位rad/s
+ */
+void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z);
 
 
 

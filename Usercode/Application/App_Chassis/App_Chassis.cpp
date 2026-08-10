@@ -77,16 +77,55 @@ void App_Chassis_Init(void)
     Steering_Motor[2].Init(DJI_Motor_6020, Steering_Motor_2_ID, &Steering_Motor_Group);
     Steering_Motor[3].Init(DJI_Motor_6020, Steering_Motor_3_ID, &Steering_Motor_Group);
 
-    //注册电机
+    //配置PID参数
     for(uint8_t i = 0; i < 4; i++)
     {
-        //注册轮电机
-        Wheel_Motor_Group.Register_Motor(&Wheel_Motor[i]);
-        //注册舵电机
-        Steering_Motor_Group.Register_Motor(&Steering_Motor[i]);
+        Wheel_Motor_PID[i].Kp_s = Wheel_Motor_PID_Kp_s;
+        Wheel_Motor_PID[i].Ki_s = Wheel_Motor_PID_Ki_s;
+        Wheel_Motor_PID[i].Kd_s = Wheel_Motor_PID_Kd_s;
+        Wheel_Motor_PID[i].ErrorInt_High_s = Wheel_Motor_PID_ErrorInt_High_s;
+        Wheel_Motor_PID[i].ErrorInt_Low_s = Wheel_Motor_PID_ErrorInt_Low_s;
+        Wheel_Motor_PID[i].Integral_Stop_Near_Zero_Enable_s = Wheel_Motor_PID_Integral_Stop_Near_Zero_Enable_s;
+        Wheel_Motor_PID[i].Integral_Stop_Target_Abs_Threshold_s = Wheel_Motor_PID_Integral_Stop_Target_Abs_Threshold_s;
+        Wheel_Motor_PID[i].Integral_Stop_Error_Abs_Threshold_s = Wheel_Motor_PID_Integral_Stop_Error_Abs_Threshold_s;
+        Wheel_Motor_PID[i].Out_High = Wheel_Motor_PID_Out_High;
+        Wheel_Motor_PID[i].Out_Low = Wheel_Motor_PID_Out_Low;
+
+        Steering_Motor_PID[i].Kp_s = Steering_Motor_PID_Kp_s;
+        Steering_Motor_PID[i].Ki_s = Steering_Motor_PID_Ki_s;
+        Steering_Motor_PID[i].Kd_s = Steering_Motor_PID_Kd_s;
+        Steering_Motor_PID[i].ErrorInt_High_s = Steering_Motor_PID_ErrorInt_High_s;
+        Steering_Motor_PID[i].ErrorInt_Low_s = Steering_Motor_PID_ErrorInt_Low_s;
+        Steering_Motor_PID[i].Integral_Stop_Near_Zero_Enable_s = Steering_Motor_PID_Integral_Stop_Near_Zero_Enable_s;
+        Steering_Motor_PID[i].Integral_Stop_Target_Abs_Threshold_s = Steering_Motor_PID_Integral_Stop_Target_Abs_Threshold_s;
+        Steering_Motor_PID[i].Integral_Stop_Error_Abs_Threshold_s = Steering_Motor_PID_Integral_Stop_Error_Abs_Threshold_s;
+        Steering_Motor_PID[i].Out_High = Steering_Motor_PID_Out_High;
+        Steering_Motor_PID[i].Out_Low = Steering_Motor_PID_Out_Low;
+
+        Steering_Motor_PID[i].Kp_a = Steering_Motor_PID_Kp_a;
+        Steering_Motor_PID[i].Ki_a = Steering_Motor_PID_Ki_a;
+        Steering_Motor_PID[i].Kd_a = Steering_Motor_PID_Kd_a;
+        Steering_Motor_PID[i].ErrorInt_High_a = Steering_Motor_PID_ErrorInt_High_a;
+        Steering_Motor_PID[i].ErrorInt_Low_a = Steering_Motor_PID_ErrorInt_Low_a;
+        Steering_Motor_PID[i].FeedForward_Enable_a = Steering_Motor_PID_FeedForward_Enable_a;
+        Steering_Motor_PID[i].Kf_a = Steering_Motor_PID_Kf_a;
+        Steering_Motor_PID[i].FeedForward_High_a = Steering_Motor_PID_FeedForward_High_a;
+        Steering_Motor_PID[i].FeedForward_Low_a = Steering_Motor_PID_FeedForward_Low_a;
+        Steering_Motor_PID[i].Integral_Stop_Near_Zero_Enable_a = Steering_Motor_PID_Integral_Stop_Near_Zero_Enable_a;
+        Steering_Motor_PID[i].Integral_Stop_Target_Abs_Threshold_a = Steering_Motor_PID_Integral_Stop_Target_Abs_Threshold_a;
+        Steering_Motor_PID[i].Integral_Stop_Error_Abs_Threshold_a = Steering_Motor_PID_Integral_Stop_Error_Abs_Threshold_a;
+        Steering_Motor_PID[i].Speed_Target_High = Steering_Motor_PID_Speed_Target_High;
+        Steering_Motor_PID[i].Speed_Target_Low = Steering_Motor_PID_Speed_Target_Low;
     }
 }
 
+/**
+ * @brief 底盘数据更新
+ * 
+ * @param Speed_X 底盘前后速度 前正后负 单位m/s
+ * @param Speed_Y 底盘左右速度 左正右负 单位m/s
+ * @param W_Z 底盘旋转速度 逆时针为正 单位rad/s
+ */
 void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
 {
     //设置当前值
@@ -96,10 +135,28 @@ void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
         Wheel_Motor_PID[i].Set_Current_Speed(Wheel_Motor[i].Get_AngleSpeed());
 
         //舵电机：传入角速度and角度
-        Steering_Motor_PID[i].Set_Current_Speed(Steering_Motor[i].Get_AngleSpeed());
-        Steering_Motor_PID[i].Set_Current_Angle(Steering_Motor[i].Get_Continuous_Angle());
+        float Steering_Motor_Current_Angle = 0.0f;
+        if (i == 0)
+        {
+            Steering_Motor_Current_Angle = Steering_Motor[i].Get_Continuous_Angle() - Steering_Motor_0_Zero_Angle;
+        }
+        else if (i == 1)
+        {
+            Steering_Motor_Current_Angle = Steering_Motor[i].Get_Continuous_Angle() - Steering_Motor_1_Zero_Angle;
+        }
+        else if (i == 2)
+        {
+            Steering_Motor_Current_Angle = Steering_Motor[i].Get_Continuous_Angle() - Steering_Motor_2_Zero_Angle;
+        }
+        else
+        {
+            Steering_Motor_Current_Angle = Steering_Motor[i].Get_Continuous_Angle() - Steering_Motor_3_Zero_Angle;
+        }
 
-        SteeringWheel_Chassis_Calculation.Set_Current_Wheel_Motor_Data(i, Wheel_Motor[i].Get_AngleSpeed(), Steering_Motor[i].Get_AngleSpeed(), Steering_Motor[i].Get_Continuous_Angle());
+        Steering_Motor_PID[i].Set_Current_Speed(Steering_Motor[i].Get_AngleSpeed());
+        Steering_Motor_PID[i].Set_Current_Angle(Steering_Motor_Current_Angle);
+
+        SteeringWheel_Chassis_Calculation.Set_Current_Wheel_Motor_Data(i, Wheel_Motor[i].Get_AngleSpeed(), Steering_Motor[i].Get_AngleSpeed(), Steering_Motor_Current_Angle);
     }
 
     //传入外部目标
@@ -116,7 +173,22 @@ void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
         //PID计算
         Wheel_Motor_PID[i].Control_Speed_To_Out();
         //设置输出
-        Wheel_Motor[i].Set_Out(Wheel_Motor_PID[i].Get_Out());
+        if (i == 0)
+        {
+            Wheel_Motor[i].Set_Out(Wheel_Motor_PID[i].Get_Out() * Wheel_Motor_0_Direction);
+        }
+        else if (i == 1)
+        {
+            Wheel_Motor[i].Set_Out(Wheel_Motor_PID[i].Get_Out() * Wheel_Motor_1_Direction);
+        }
+        else if (i == 2)
+        {
+            Wheel_Motor[i].Set_Out(Wheel_Motor_PID[i].Get_Out() * Wheel_Motor_2_Direction);
+        }
+        else
+        {
+            Wheel_Motor[i].Set_Out(Wheel_Motor_PID[i].Get_Out() * Wheel_Motor_3_Direction);
+        }
         
 
         //设置舵电机目标角度
@@ -124,7 +196,22 @@ void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
         //PID计算
         Steering_Motor_PID[i].Control_Cascade();
         //设置输出
-        Steering_Motor[i].Set_Out(Steering_Motor_PID[i].Get_Out());
+        if (i == 0)
+        {
+            Steering_Motor[i].Set_Out(Steering_Motor_PID[i].Get_Out() * Steering_Motor_0_Direction);
+        }
+        else if (i == 1)
+        {
+            Steering_Motor[i].Set_Out(Steering_Motor_PID[i].Get_Out() * Steering_Motor_1_Direction);
+        }
+        else if (i == 2)
+        {
+            Steering_Motor[i].Set_Out(Steering_Motor_PID[i].Get_Out() * Steering_Motor_2_Direction);
+        }
+        else
+        {
+            Steering_Motor[i].Set_Out(Steering_Motor_PID[i].Get_Out() * Steering_Motor_3_Direction);
+        }
     }
 
     //PushOut
