@@ -97,6 +97,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${YXN_ECF_DIR}/bsp/CAN/FDCAN/fdcan_adapter.cpp
     ${YXN_ECF_DIR}/module/Motor/DJI_Motor/DJI_Motor.cpp
     ${YXN_ECF_DIR}/algorithm/PID/PID.cpp
+    ${YXN_ECF_DIR}/module/SteeringWheel_Infantry/BoardCAN/BoardCAN.cpp
 )
 
 #头文件路径和宏定义区域
@@ -110,6 +111,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${YXN_ECF_DIR}/module/Motor/DJI_Motor
     ${YXN_ECF_DIR}/bsp/CAN
     ${YXN_ECF_DIR}/algorithm/PID
+    ${YXN_ECF_DIR}/module/SteeringWheel_Infantry/BoardCAN
 )
 
 # Add project symbols (macros)
