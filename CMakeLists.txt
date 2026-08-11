@@ -99,6 +99,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${YXN_ECF_DIR}/algorithm/PID/PID.cpp
     ${YXN_ECF_DIR}/module/SteeringWheel_Infantry/BoardCAN/BoardCAN.cpp
     ${YXN_ECF_DIR}/module/SteeringWheel_Infantry/Remote_Data_Reception/Remote_Data_Reception.cpp
+    ${YXN_ECF_DIR}/module/DR16/DR16.cpp
+    ${YXN_ECF_DIR}/bsp/USART/bsp_usart.cpp
+    ${YXN_ECF_DIR}/algorithm/MyMath/MyMath.c
 )
 
 #头文件路径和宏定义区域
@@ -116,6 +119,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${YXN_ECF_DIR}/module/SteeringWheel_Infantry/Remote_Data_Reception
     ${YXN_ECF_DIR}/module/DR16
     ${YXN_ECF_DIR}/bsp/USART
+    ${YXN_ECF_DIR}/algorithm/MyMath
 )
 
 # Add project symbols (macros)
