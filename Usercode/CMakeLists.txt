@@ -2,6 +2,7 @@
 set(USER_APP_SOURCES
     Application/App_Chassis/App_Chassis.cpp
     Application/App_CAN/App_CAN.cpp
+    Application/App_Chassis_Control/App_Chassis_Control.cpp
 )
 # set() 创建名为 USER_APP_SOURCES 的 CMake 列表变量。
 # 每创建一个 App 源文件，就把相对 Usercode 目录的路径写在这里，例如：

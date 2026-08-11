@@ -1,16 +1,16 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    App_CAN.h
+  * @file    App_Chassis_Control.h
   * @brief   This file contains all the function prototypes for
-  *          the App_CAN.c/.cpp file
+  *          the App_Chassis_Control.cpp file
   * @author  yxn
   ******************************************************************************
   */
 /* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_CAN_H__
-#define __APP_CAN_H__
+#ifndef __APP_CHASSIS_CONTROL_H__
+#define __APP_CHASSIS_CONTROL_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,33 +18,23 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "CAN_Interface.h"
-#include "BoardCAN.h"
+
 /*YOUR CODE*/
 
 /**
- * @brief 获取CAN接口类指针
- * 
- * @param CAN_Index 1-3
- * @return Class_CAN_Interface* CAN接口
+ * @brief 初始化底盘遥控控制APP
  */
-Class_CAN_Interface *AppCAN_Get_Interface(uint8_t CAN_Index);
+void App_Chassis_Control_Init(void);
 
 /**
- * @brief 获取舵轮步兵板间通信对象指针
+ * @brief 更新底盘遥控控制状态
  *
- * @return Class_SteeringWheel_Infantry_BoardCAN* 板间通信对象指针
+ * @param Now_ms 当前系统时间，单位ms
  */
-Class_SteeringWheel_Infantry_BoardCAN *AppCAN_Get_BoardCAN(void);
-
-void AppCAN_Init(void);
-
-
-
-
+void App_Chassis_Control_Update(uint32_t Now_ms);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __APP_CAN_H__ */
+#endif /* __APP_CHASSIS_CONTROL_H__ */

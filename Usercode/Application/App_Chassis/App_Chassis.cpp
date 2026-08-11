@@ -168,13 +168,13 @@ void App_Chassis_Init(void)
 }
 
 /**
- * @brief 底盘数据更新
- * 
+ * @brief 更新底盘反馈、PID当前值和运动学解算状态
+ *
  * @param Speed_X 底盘前后速度 前正后负 单位m/s
  * @param Speed_Y 底盘左右速度 左正右负 单位m/s
  * @param W_Z 底盘旋转速度 逆时针为正 单位rad/s
  */
-void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
+static void App_Chassis_Update_State(float Speed_X,float Speed_Y,float W_Z)
 {
     All_Motors_Online = App_Chassis_All_Motors_Online();
 
@@ -214,6 +214,29 @@ void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
 
     //数据更新计算
     SteeringWheel_Chassis_Calculation.Update();
+}
+
+/**
+ * @brief 底盘进入无力状态
+ *
+ * @details 保持底盘状态刷新，重置PID并持续发送零输出
+ */
+void App_Chassis_No_Power(void)
+{
+    App_Chassis_Update_State(0.0f,0.0f,0.0f);
+    App_Chassis_Force_Zero_Output();
+}
+
+/**
+ * @brief 底盘数据更新
+ *
+ * @param Speed_X 底盘前后速度 前正后负 单位m/s
+ * @param Speed_Y 底盘左右速度 左正右负 单位m/s
+ * @param W_Z 底盘旋转速度 逆时针为正 单位rad/s
+ */
+void App_Chassis_Update(float Speed_X,float Speed_Y,float W_Z)
+{
+    App_Chassis_Update_State(Speed_X,Speed_Y,W_Z);
 
     // 反馈未全部就绪时继续刷新底盘数据，但禁止PID计算和非零输出。
     if (!All_Motors_Online)

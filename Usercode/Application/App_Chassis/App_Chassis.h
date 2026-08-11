@@ -37,6 +37,13 @@ void App_Chassis_CAN_RX_Callback(uint8_t CAN_Index,uint16_t id,const uint8_t *da
 void App_Chassis_Init(void);
 
 /**
+ * @brief 底盘进入无力状态
+ *
+ * @details 保持底盘状态刷新，重置PID并持续发送零输出
+ */
+void App_Chassis_No_Power(void);
+
+/**
  * @brief 底盘数据更新
  * 
  * @param Speed_X 底盘前后速度 前正后负 单位m/s
