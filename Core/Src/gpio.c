@@ -52,10 +52,10 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(CS2_GYRO_GPIO_Port, CS2_GYRO_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CS2_GYRO_GPIO_Port, CS2_GYRO_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(CS1_ACCLE_GPIO_Port, CS1_ACCLE_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CS1_ACCLE_GPIO_Port, CS1_ACCLE_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : INT3_GYRO_Pin INT1_ACCEL_Pin */
   GPIO_InitStruct.Pin = INT3_GYRO_Pin|INT1_ACCEL_Pin;

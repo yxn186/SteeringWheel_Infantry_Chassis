@@ -37,6 +37,9 @@ Class_CAN_Interface *AppCAN_Get_Interface(uint8_t CAN_Index);
  */
 Class_SteeringWheel_Infantry_BoardCAN *AppCAN_Get_BoardCAN(void);
 
+/**
+ * @brief 初始化三路FDCAN适配器、板间通信对象和接收回调
+ */
 void AppCAN_Init(void);
 
 

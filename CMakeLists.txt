@@ -101,6 +101,11 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${YXN_ECF_DIR}/module/SteeringWheel_Infantry/Remote_Data_Reception/Remote_Data_Reception.cpp
     ${YXN_ECF_DIR}/module/DR16/DR16.cpp
     ${YXN_ECF_DIR}/bsp/USART/bsp_usart.cpp
+    ${YXN_ECF_DIR}/bsp/SPI/bsp_spi.cpp
+    ${YXN_ECF_DIR}/module/bmi088/bmi088.cpp
+    ${YXN_ECF_DIR}/algorithm/Attitude/IMU_Bias_Calibration.cpp
+    ${YXN_ECF_DIR}/algorithm/Attitude/Mahony.cpp
+    ${YXN_ECF_DIR}/algorithm/Math/Rotation3D.cpp
     ${YXN_ECF_DIR}/algorithm/MyMath/MyMath.c
 )
 
@@ -119,6 +124,10 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${YXN_ECF_DIR}/module/SteeringWheel_Infantry/Remote_Data_Reception
     ${YXN_ECF_DIR}/module/DR16
     ${YXN_ECF_DIR}/bsp/USART
+    ${YXN_ECF_DIR}/bsp/SPI
+    ${YXN_ECF_DIR}/module/bmi088
+    ${YXN_ECF_DIR}/algorithm/Attitude
+    ${YXN_ECF_DIR}/algorithm/Math
     ${YXN_ECF_DIR}/algorithm/MyMath
 )
 

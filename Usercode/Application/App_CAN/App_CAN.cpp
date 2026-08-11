@@ -10,9 +10,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "App_CAN.h"
 #include "Application/App_Chassis/App_Chassis.h"
+#include "Application/App_Chassis_Attitude/App_Chassis_Attitude.h"
+#include "Application/App_Fire/App_Fire.h"
 #include "bsp_fdcan.h"
 #include "CAN_Interface.h"
-#include "Application/App_Chassis/App_Chassis.h"
 #include "fdcan_adapter.h"
 #include "BoardCAN.h"
 
@@ -25,27 +26,52 @@ Class_FDCAN_Adapter FDCAN3_Adapter;
 static Class_SteeringWheel_Infantry_BoardCAN BoardCAN;
 
 
+/**
+ * @brief 处理FDCAN1接收帧
+ *
+ * @param header FDCAN接收帧头
+ * @param buffer FDCAN接收数据区
+ */
 static void FDCAN1_Rx_Callback(FDCAN_RxHeaderTypeDef &header,uint8_t *buffer)
 {
     if (buffer == nullptr) return;
 
     if (header.IdType != FDCAN_STANDARD_ID || header.RxFrameType != FDCAN_DATA_FRAME || header.DataLength != FDCAN_DLC_BYTES_8) return;
     
-    //进入接收进程函数
-    App_Chassis_CAN_RX_Callback(1,static_cast<uint16_t>(header.Identifier),
-                                buffer,FDCAN_Convert_DLC_To_Length(header.DataLength));
+    uint16_t CAN_ID = static_cast<uint16_t>(header.Identifier);
+    uint8_t Length = FDCAN_Convert_DLC_To_Length(header.DataLength);
+
+    //CAN1同时承载底盘轮电机和可选拨弹盘反馈，各模块只处理自己的CAN ID
+    App_Chassis_CAN_RX_Callback(1,CAN_ID,buffer,Length);
+    App_Fire_Process_CAN_Message(CAN_ID,buffer,Length);
 }
 
+/**
+ * @brief 处理FDCAN2板间通信和云台Yaw反馈
+ *
+ * @param header FDCAN接收帧头
+ * @param buffer FDCAN接收数据区
+ */
 static void FDCAN2_Rx_Callback(FDCAN_RxHeaderTypeDef &header,uint8_t *buffer)
 {
     if (buffer == nullptr) return;
 
     if (header.IdType != FDCAN_STANDARD_ID || header.RxFrameType != FDCAN_DATA_FRAME || header.DataLength != FDCAN_DLC_BYTES_8) return;
     
-    //进入板间通信接收进程函数
-    BoardCAN.Process_CAN_Message(static_cast<uint16_t>(header.Identifier),buffer,FDCAN_Convert_DLC_To_Length(header.DataLength),HAL_GetTick());
+    uint16_t CAN_ID = static_cast<uint16_t>(header.Identifier);
+    uint8_t Length = FDCAN_Convert_DLC_To_Length(header.DataLength);
+
+    //CAN2同时承载遥控共享数据和云台Yaw电机反馈
+    BoardCAN.Process_CAN_Message(CAN_ID,buffer,Length,HAL_GetTick());
+    App_Chassis_Attitude_Process_CAN_Message(CAN_ID,buffer,Length);
 }
 
+/**
+ * @brief 处理FDCAN3接收帧
+ *
+ * @param header FDCAN接收帧头
+ * @param buffer FDCAN接收数据区
+ */
 static void FDCAN3_Rx_Callback(FDCAN_RxHeaderTypeDef &header,uint8_t *buffer)
 {
     if (buffer == nullptr) return;

@@ -4,6 +4,9 @@ set(USER_APP_SOURCES
     Application/App_CAN/App_CAN.cpp
     Application/App_Chassis_Control/App_Chassis_Control.cpp
     Application/App_Remote/App_Remote.cpp
+    Application/App_IMU/App_IMU.cpp
+    Application/App_Chassis_Attitude/App_Chassis_Attitude.cpp
+    Application/App_Fire/App_Fire.cpp
 )
 # set() 创建名为 USER_APP_SOURCES 的 CMake 列表变量。
 # 每创建一个 App 源文件，就把相对 Usercode 目录的路径写在这里，例如：
